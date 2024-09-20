@@ -28,6 +28,7 @@
         <spring-boot-admin.version>2.7.11</spring-boot-admin.version>
         <p6spy.version>3.9.1</p6spy.version>
         <dynamic-ds.version>3.5.2</dynamic-ds.version>
+        <alibaba-ttl.version>2.14.2</alibaba-ttl.version>
     </properties>
 
     <profiles>
@@ -121,6 +122,12 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
                 <version>${dynamic-ds.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>transmittable-thread-local</artifactId>
+                <version>${alibaba-ttl.version}</version>
             </dependency>
 
         </dependencies>
