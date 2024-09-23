@@ -2,6 +2,10 @@
 pipeline {
     // 指定任务在哪个集群节点中执行
     agent any
+    // 制定jdk
+    tools {
+       jdk "jdk17"
+    }
     // 声明环境变量
     environment {
         PROJECT_GIT_URL='http://127.0.0.1/bingWallpaper'
