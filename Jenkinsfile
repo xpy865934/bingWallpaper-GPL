@@ -21,5 +21,17 @@ pipeline {
             steps {
             }
         }
+        stage('构建前端文件') {
+            steps {
+                sh '''
+                cd ruoyi-ui/
+                yarn install
+                yarn run build:${ACTIVE_PROFILE}'''
+            }
+        }
+        stage('发送前端文件到目标服务器') {
+            steps {
+            }
+        }
     }
 }
