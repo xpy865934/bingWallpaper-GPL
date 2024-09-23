@@ -41,6 +41,7 @@ public class BingWallpaperApiController {
         BingWallpaperInfo bingWallpaperInfo = iBingWallpaperInfoService.getOne(queryWrapper);
         if(ObjUtil.isEmpty(bingWallpaperInfo)){
             // 查询数据库中当前最大值
+            queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.orderByDesc(BingWallpaperInfo::getStartTime).last("limit 1");
             bingWallpaperInfo = iBingWallpaperInfoService.getOne(queryWrapper);
         }
