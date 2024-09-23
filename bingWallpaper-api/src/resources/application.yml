@@ -1,7 +1,7 @@
 # 项目相关配置
 bingWallpaper:
   # 名称
-  name: bingWallpaper
+  name: bing-wallpaper
   # 版本
   version: ${revision}
   # 版权年份
