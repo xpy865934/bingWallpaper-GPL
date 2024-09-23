@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  bing-wallpaper-server:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: star/bing-wallpaper-server:1.0.0
+    container_name: bing-wallpaper-server
+    environment:
+      TZ: Asia/Shanghai
+      SERVER_PORT: 18083
+    ports:
+      - "18083:18083"
+    volumes:
+      - /home/server/bing_wallpaper/logs:/server/bing_wallpaper/logs
+      - /home/server/bing_wallpaper/images:/server/bing_wallpaper/images
+    privileged: true
+    networks:
+      inner_network:
+        ipv4_address: 172.16.0.5
+
+networks:
+  inner_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/16
+          gateway: 172.16.0.1
