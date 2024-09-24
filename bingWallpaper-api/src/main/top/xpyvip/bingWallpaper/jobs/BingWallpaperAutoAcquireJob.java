@@ -74,6 +74,24 @@ public class BingWallpaperAutoAcquireJob {
         this.getBingWallpaperInfo(null);
     }
 
+    /**
+     * 将redis访问量写入数据库
+     */
+    @XxlJob("saveSystemInfo")
+    public void saveSystemInfo() throws Exception {
+        XxlJobHelper.log("将redis访问量写入数据库");
+        SystemInfo systemInfo = iSystemInfoService.getOne(new LambdaQueryWrapper<>());
+        if(ObjUtil.isEmpty(systemInfo)){
+            systemInfo = new SystemInfo();
+        }
+        systemInfo.setVisitCount(RedisUtils.getAtomicValue("visitCount"));
+        if(ObjUtil.isEmpty(systemInfo.getId())){
+            iSystemInfoService.save(systemInfo);
+        } else {
+            iSystemInfoService.updateById(systemInfo);
+        }
+    }
+
     private void getBingWallpaperInfo(List<String> dateList) {
 
     }

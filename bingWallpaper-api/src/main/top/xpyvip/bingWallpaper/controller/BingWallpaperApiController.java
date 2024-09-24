@@ -36,6 +36,7 @@ public class BingWallpaperApiController {
      */
     @GetMapping()
     public String get() throws Exception {
+        RedisUtils.incrAtomicValue("visitCount");
         LambdaQueryWrapper<BingWallpaperInfo> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.likeRight(BingWallpaperInfo::getStartTime,DateUtil.format(DateUtil.date(), DatePattern.NORM_DATE_FORMAT));
         BingWallpaperInfo bingWallpaperInfo = iBingWallpaperInfoService.getOne(queryWrapper);
