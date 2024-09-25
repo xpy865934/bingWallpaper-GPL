@@ -93,6 +93,9 @@ public class BingWallpaperAutoAcquireJob {
     }
 
     private void getBingWallpaperInfo(List<String> dateList) {
-
+        ApplicationHome h = new ApplicationHome(getClass());
+        File jarF = h.getSource();
+        System.out.println(jarF.getParentFile().toString());
+        imagePath = jarF.getParentFile().toString() + File.separator + imagePath;
     }
 }
