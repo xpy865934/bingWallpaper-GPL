@@ -322,4 +322,23 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 找出字符串中最大的数字
+     * @param str
+     * @return
+     */
+    public static int getMaxNum(String str) {
+        String reg = "[0-9]+";
+        Pattern p = Pattern.compile(reg);
+        Matcher m = p.matcher(str);
+        int max = Integer.MIN_VALUE;
+        while (m.find()) {
+            int t = Integer.parseInt(m.group());
+            if (t > max) {
+                max = t;
+            }
+        }
+        return max;
+    }
+
 }
