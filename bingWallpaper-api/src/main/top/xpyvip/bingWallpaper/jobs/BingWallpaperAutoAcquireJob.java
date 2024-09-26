@@ -96,6 +96,6 @@ public class BingWallpaperAutoAcquireJob {
         ApplicationHome h = new ApplicationHome(getClass());
         File jarF = h.getSource();
         System.out.println(jarF.getParentFile().toString());
-        imagePath = jarF.getParentFile().toString() + File.separator + imagePath;
+        String imagePath = jarF.getParentFile().toString() + File.separator + this.imagePath;
     }
 }
