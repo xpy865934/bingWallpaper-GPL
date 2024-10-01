@@ -10,9 +10,9 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.http.MediaType;
@@ -54,22 +54,37 @@ public class BingWallpaperApiController {
     private String imagePath;
 
     /**
-     * 返回当天1080p的图像
+     * 返回指定日期的图像， 默认如果day是空的，返回当天的图像，如果都不传，默认是当天1080p的图像
      *
      */
     @GetMapping()
-    public void get(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void get(String day, String w, HttpServletRequest request, HttpServletResponse response) throws Exception {
         RedisUtils.incrAtomicValue("visitCount");
-        LambdaQueryWrapper<BingWallpaperInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.likeRight(BingWallpaperInfo::getStartTime,DateUtil.format(DateUtil.date(), DatePattern.NORM_DATE_FORMAT));
-        BingWallpaperInfo bingWallpaperInfo = iBingWallpaperInfoService.getOne(queryWrapper);
-        if(ObjUtil.isEmpty(bingWallpaperInfo)){
-            // 查询数据库中当前最大值
-            queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.orderByDesc(BingWallpaperInfo::getStartTime).last("limit 1");
-            bingWallpaperInfo = iBingWallpaperInfoService.getOne(queryWrapper);
+        DateTime now = DateUtil.date();
+        try {
+            if(StrUtil.isNotEmpty(day)) {
+                now = DateUtil.parse(day, DatePattern.PURE_DATE_PATTERN);
+            }
+        } catch (Exception e) {
+            log.info("格式化日期错误");
         }
-        byte[] image = getImageUrl(bingWallpaperInfo, null);
+        // 此处从redis查询，不直接从数据库查询
+        BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject(DateUtil.format(now, DatePattern.PURE_DATE_PATTERN));
+        byte[] image = getImageUrl(bingWallpaperInfo, w);
+        backImage(image, request, response);
+    }
+
+    /**
+     * 返回当天4K图像
+     *
+     */
+    @GetMapping("/4K")
+    public void get4K(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        RedisUtils.incrAtomicValue("visitCount");
+        DateTime now = DateUtil.date();
+        // 此处从redis查询，不直接从数据库查询
+        BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject(DateUtil.format(now, DatePattern.PURE_DATE_PATTERN));
+        byte[] image = getImageUrl(bingWallpaperInfo, "UHD");
         backImage(image, request, response);
     }
 
@@ -91,31 +106,39 @@ public class BingWallpaperApiController {
         WeightRandom<Long> weightRandom = RandomUtil.weightRandom(weightObjs);
         Long next = weightRandom.next();
         DateTime dateTime = RandomUtil.randomDay(-next.intValue(), 0);
-        LambdaQueryWrapper<BingWallpaperInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.likeRight(BingWallpaperInfo::getStartTime,DateUtil.format(dateTime, DatePattern.NORM_DATE_FORMAT));
-        BingWallpaperInfo bingWallpaperInfo = iBingWallpaperInfoService.getOne(queryWrapper);
-        if(ObjUtil.isEmpty(bingWallpaperInfo)){
-            // 查询数据库中当前最大值
-            queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.orderByDesc(BingWallpaperInfo::getStartTime).last("limit 1");
-            bingWallpaperInfo = iBingWallpaperInfoService.getOne(queryWrapper);
-        }
+        // 此处从redis查询，不直接从数据库查询
+        BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject(DateUtil.format(dateTime, DatePattern.PURE_DATE_PATTERN));
         byte[] image = getImageUrl(bingWallpaperInfo, w);
+        backImage(image, request, response);
+    }
+
+    /**
+     * 更新缓存
+     *
+     */
+    @GetMapping("/refresh")
+    public void refreshCache(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        RedisUtils.incrAtomicValue("visitCount");
+        // 限制一个小时之内只能调用一次
+        String lastRefreshTime = RedisUtils.getCacheObject("lastRefreshTime");
+        if(StrUtil.isEmpty(lastRefreshTime)) {
+            RedisUtils.setCacheObject("lastRefreshTime", DateUtil.now());
+            bingWallpaperAutoAcquireJob.dayAcquireBingJsonJobHandler();
+        } else {
+            long hours = DateUtil.between(DateUtil.parse(lastRefreshTime, DatePattern.NORM_DATETIME_FORMAT), DateUtil.date(), DateUnit.HOUR);
+            if (hours > 0) {
+                RedisUtils.setCacheObject("lastRefreshTime", DateUtil.now());
+                bingWallpaperAutoAcquireJob.dayAcquireBingJsonJobHandler();
+            }
+        }
+        byte[] image = getImageUrl(null, null);
         backImage(image, request, response);
     }
 
     private void backImage(byte[] image, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if(ObjUtil.isEmpty(image)){
-            // 返回当天1080p图像
-            LambdaQueryWrapper<BingWallpaperInfo> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.likeRight(BingWallpaperInfo::getStartTime,DateUtil.format(DateUtil.date(), DatePattern.NORM_DATE_FORMAT));
-            BingWallpaperInfo bingWallpaperInfo = iBingWallpaperInfoService.getOne(queryWrapper);
-            if(ObjUtil.isEmpty(bingWallpaperInfo)){
-                // 查询数据库中当前最大值
-                queryWrapper = new LambdaQueryWrapper<>();
-                queryWrapper.orderByDesc(BingWallpaperInfo::getStartTime).last("limit 1");
-                bingWallpaperInfo = iBingWallpaperInfoService.getOne(queryWrapper);
-            }
+            // 查询redis中最新数据
+            BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject("LastInfo");
             image = getImageUrl(bingWallpaperInfo, null);
         }
         // 设置 contentType

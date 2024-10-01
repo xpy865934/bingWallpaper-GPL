@@ -62,6 +62,9 @@ public class BingWallpaperAutoAcquireJob {
             DateTime dateTime = DateUtil.offsetDay(oldDate, i+1);
             dateList.add(DateUtil.format(dateTime, DatePattern.PURE_DATE_PATTERN));
         }
+        if(CollUtil.isEmpty(dateList)){
+            return;
+        }
         this.getBingWallpaperInfo(dateList);
     }
 

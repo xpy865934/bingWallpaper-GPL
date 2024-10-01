@@ -19,11 +19,4 @@ import top.xpyvip.bingWallpaper.utils.redis.RedisUtils;
 @Service
 public class SystemInfoServiceImpl extends ServiceImpl<SystemInfoMapper, SystemInfo> implements ISystemInfoService {
 
-    @EventListener(classes = ApplicationReadyEvent.class)
-    public void initData(){
-        SystemInfo systemInfo = this.getOne(new QueryWrapper<>());
-        if(ObjUtil.isNotEmpty(systemInfo)) {
-            RedisUtils.setAtomicValue("visitCount", systemInfo.getVisitCount());
-        }
-    }
 }
