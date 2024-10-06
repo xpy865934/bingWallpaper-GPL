@@ -138,7 +138,7 @@ public class BingWallpaperApiController {
     private void backImage(byte[] image, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if(ObjUtil.isEmpty(image)){
             // 查询redis中最新数据
-            BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject("LastInfo");
+            BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject("lastInfo");
             image = getImageUrl(bingWallpaperInfo, null);
         }
         // 设置 contentType
