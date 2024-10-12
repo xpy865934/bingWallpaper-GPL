@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://wwww.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="applicable-device" content="pc,mobile" />
+    <meta name="renderer" content="webkit|ie-comp|ie-stand" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="wap-font-scale" content="no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    <link rel="shortcut icon" type="images/x-icon" href="../images/logo/bing.ico" />
+    <title th:text="${title}"></title>
+    <meta name="author" th:content="${author}" />
+    <meta name="version" content="v1.0" />
+    <meta name="keywords" th:content="${keywords}" />
+    <meta name="description" th:content="${description}" />
+    <link href="//cdn.staticfile.net/layui/2.9.13/css/layui.css" rel="stylesheet">
+    <link href="../css/detail.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.net/waline/3.0.0-alpha.10/waline.css" />
+    <script src="https://cdn.staticfile.net/jquery/3.7.1/jquery.slim.min.js"></script>
+</head>
+<body>
+<div class="preview-image">
+    <div class="preview-image-container">
+        <img th:src="${detailUrl}">
+    </div>
+</div>
+<div class="header">
+    <div class="container">
+        <h1>
+            <div class="left-btn">
+                <div class="layui-btn-container">
+                    <button type="button" class="layui-btn layui-btn-radius" onclick="window.history.back()"><i class="layui-icon layui-icon-left layui-font-12"></i>返回</button>
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-radius" onclick="window.location.href=window.location.protocol + '//' + window.location.host + '/index'"><i class="layui-icon layui-icon-website layui-font-12"></i>首页</button>
+                </div>
+            </div>
+            <div class="right-btn">
+                <div class="layui-btn-container">
+                    <button type="button" class="layui-btn layui-btn-radius layui-bg-orange" id="btn-api">API</button>
+                    <button type="button" class="layui-btn layui-btn-radius layui-bg-blue" id="btn-feed_back">反馈</button>
+                </div>
+            </div>
+        </h1>
+    </div>
+</div>
+
+<div class="desc">
+    <div class="layui-font-20 layui-padding-2" th:text="${desc}"></div>
+    <div class="layui-font-16 layui-padding-2 story" th:utext="${story}"></div>
+</div>
+
+<div class="preview-pagination">
+    <div class="left-preview-btn">
+        <button th:if="${lastPage} != null" type="button" class="layui-btn layui-btn-sm layui-btn-normal" th:onclick="location.href='[(${lastPage})]'">
+            <i class="layui-icon layui-icon-left" style="font-size: 46px"></i>
+        </button>
+    </div>
+    <div class="right-preview-btn">
+        <button th:if="${nextPage} != null" type="button" class="layui-btn layui-btn-sm layui-btn-warm" th:onclick="location.href='[(${nextPage})]'">
+            <i class="layui-icon layui-icon-right" style="font-size: 46px"></i>
+        </button>
+    </div>
+</div>
+
+<!-- HTML Content -->
+<script src="//cdn.staticfile.net/layui/2.9.13/layui.js"></script>
+<script type="module">
+    import { init } from 'https://cdn.staticfile.net/waline/3.0.0-alpha.10/waline.js';
+    // $('.preview-image-container').css("background","url('[[${detailUrl}]]') center center \/ cover no-repeat");
+    // Usage
+    layui.use(function(){
+        var $ = layui.$;
+
+        // 按钮
+        $('#btn-feed_back').on('click', function(){
+            layer.open({
+                type: 1, // page 层类型
+                area: ['800px', '600px'],
+                title: '系统反馈',
+                shade: 0.6, // 遮罩透明度
+                shadeClose: true, // 点击遮罩区域，关闭弹层
+                maxmin: true, // 允许全屏最小化
+                anim: 0, // 0-6 的动画形式，-1 不开启
+                content: '<div id="feed-back-body"></div>'
+            });
+
+            init({
+                el: '#feed-back-body',
+                serverURL: '[[${feedBackUrl}]]',
+                imageUploader: false,
+                search: false,
+                copyright: false
+            });
+        });
+
+        // 按钮
+        $('#btn-api').on('click', function(){
+            layer.open({
+                type: 1, // page 层类型
+                area: ['800px', '600px'],
+                title: '系统反馈',
+                shade: 0.6, // 遮罩透明度
+                shadeClose: true, // 点击遮罩区域，关闭弹层
+                maxmin: true, // 允许全屏最小化
+                anim: 0, // 0-6 的动画形式，-1 不开启
+                content: '<div id="feed-back-body">12</div>'
+            });
+        });
+    });
+
+</script>
+</body>
+</html>

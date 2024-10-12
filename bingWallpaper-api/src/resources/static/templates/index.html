@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://wwww.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="applicable-device" content="pc,mobile" />
+    <meta name="renderer" content="webkit|ie-comp|ie-stand" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="wap-font-scale" content="no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    <link rel="shortcut icon" type="images/x-icon" href="../images/logo/bing.ico" />
+    <title th:text="${title}"></title>
+    <meta name="author" th:content="${author}" />
+    <meta name="version" content="v1.0" />
+    <meta name="keywords" th:content="${keywords}" />
+    <meta name="description" th:content="${description}" />
+    <link href="//cdn.staticfile.net/layui/2.9.13/css/layui.css" rel="stylesheet">
+    <link href="../css/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.net/waline/3.0.0-alpha.10/waline.css" />
+    <script src="https://cdn.staticfile.net/jquery/3.7.1/jquery.slim.min.js"></script>
+</head>
+<body>
+<div class="header">
+    <div class="container">
+        <h1>
+            <a href="/" target="_self" th:title="${name}">
+                <img src="../images/logo/bing.ico" style="width: 25px; margin-top: -5px;" th:alt="${name}">
+            </a>
+            <a href="/" target="_blank" th:title="${shortDesc}" th:text="${shortDesc}"></a>
+            <div class="right-btn">
+                <div class="layui-btn-container">
+                    <button type="button" class="layui-btn layui-btn-radius layui-bg-orange" id="btn-api">API</button>
+                    <button type="button" class="layui-btn layui-btn-radius layui-bg-blue" id="btn-feed_back">反馈</button>
+                </div>
+            </div>
+        </h1>
+    </div>
+</div>
+<div class="content">
+    <div class="container">
+        <div class="data-list layui-row">
+            <div class="card layui-col-xs12 layui-col-sm6 layui-col-md4 layui-col-lg4 layui-col-xl4" th:each="item:${tableData.rows}">
+                <div class="card-image">
+                    <a href="javascript:;" th:onclick="location.href='./detail/[(${#dates.format(item.startTime, 'yyyyMMdd')})]'" th:title="${item.title} + ' ' + ${item.copyright} + ' ' + ${#dates.format(item.startTime, 'yyyyMMdd')}">
+                        <div>
+                            <img th:src="@{./image/?day={day}(day=${#dates.format(item.startTime, 'yyyyMMdd')})}"
+                                 th:alt="${item.title} + ' ' + ${item.copyright} + ' ' + ${#dates.format(item.startTime, 'yyyyMMdd')}">
+                        </div>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="title layui-elip">
+                        <h2 class="layui-font-14 layui-margin-2">
+                            <a href="javascript:;" th:onclick="location.href='./detail/[(${#dates.format(item.startTime, 'yyyyMMdd')})]'" th:title="${item.copyright}" th:text="${item.copyright}"></a>
+                        </h2>
+                    </div>
+                    <div class="time layui-padding-2">
+                        <span th:text="${#dates.format(item.startTime, 'yyyy年MM月dd日')}"></span>
+                        <div class="views">
+                            <i class="layui-icon layui-icon-eye"></i>&nbsp;<span th:text="${item.views}"></span>
+                            <!--                                <i class="layui-icon layui-icon-heart-fill"></i><span th:text="${item.favorites}"></span>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page">
+            <div id="page"></div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- HTML Content -->
+<script src="//cdn.staticfile.net/layui/2.9.13/layui.js"></script>
+<script type="module">
+    import { init } from 'https://cdn.staticfile.net/waline/3.0.0-alpha.10/waline.js';
+    $('body').css('background', 'url([[${url}]]) center center / cover no-repeat');
+    // Usage
+    layui.use(function(){
+        var $ = layui.$;
+        var layer = layui.layer;
+        // 分页
+        var laypage = layui.laypage;
+        laypage.render({
+            elem: 'page',
+            count: '[[${tableData.total}]]', // 数据总数
+            limit: '[[${tableData.size}]]',
+            curr: '[[${tableData.current}]]',
+            jump: function(obj, first){
+                var current = obj.curr;
+                var limit = obj.limit;
+                // 首次不执行
+                if (!first) {
+                    window.open('./?pageNum=' + current, '_self')
+                }
+            }
+        });
+
+        // 按钮
+        $('#btn-feed_back').on('click', function(){
+            layer.open({
+                type: 1, // page 层类型
+                area: ['800px', '600px'],
+                title: '系统反馈',
+                shade: 0.6, // 遮罩透明度
+                shadeClose: true, // 点击遮罩区域，关闭弹层
+                maxmin: true, // 允许全屏最小化
+                anim: 0, // 0-6 的动画形式，-1 不开启
+                content: '<div id="feed-back-body"></div>'
+            });
+
+            init({
+                el: '#feed-back-body',
+                serverURL: '[[${feedBackUrl}]]',
+                imageUploader: false,
+                search: false,
+                copyright: false
+            });
+        });
+
+        // 按钮
+        $('#btn-api').on('click', function(){
+            layer.open({
+                type: 1, // page 层类型
+                area: ['800px', '600px'],
+                title: '系统反馈',
+                shade: 0.6, // 遮罩透明度
+                shadeClose: true, // 点击遮罩区域，关闭弹层
+                maxmin: true, // 允许全屏最小化
+                anim: 0, // 0-6 的动画形式，-1 不开启
+                content: '<div id="feed-back-body">12</div>'
+            });
+        });
+    });
+
+</script>
+</body>
+</html>

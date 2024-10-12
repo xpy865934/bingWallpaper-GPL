@@ -1,0 +1,125 @@
+body {
+    background-attachment: fixed !important;
+    backdrop-filter: blur(0px) !important;;
+    background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+a:link, a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #000;
+}
+
+.header {
+    background: linear-gradient(to right, #ffecea, #c4e7f7, #ffecea, #c4e7f7, #ffecea);
+    min-height: 50px;
+    margin-bottom: 1.6rem;
+}
+
+.container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto
+}
+
+@media (min-width: 576px) {
+    .container {
+        max-width:540px
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width:720px
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        max-width:960px
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width:1140px
+    }
+}
+
+.header .container h1{
+    line-height: 50px;
+    font-size: 24px;
+}
+
+.header .container .right-btn {
+    float: right;
+}
+
+.content {
+
+}
+
+.content .container{
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.card {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.card-image {
+    max-height: 261px;
+    border-top-left-radius: 0.3rem;
+    border-top-right-radius: 0.3rem;
+    overflow: hidden;
+}
+
+.card-image img {
+    max-width: 100%;
+    border-top-left-radius: 0.3rem;
+    border-top-right-radius: 0.3rem;
+    transition: all 444ms ease-in-out;
+}
+
+.card-image img:hover {
+    border-top-left-radius: 0.3rem;
+    border-top-right-radius: 0.3rem;
+    transform: scale(1.05);
+}
+
+.card-body {
+    background-color: #fff;
+}
+
+.card-body .title h2 {
+    font-weight: 400;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.card-body .time span {
+    color: #999fa5;
+}
+
+.card-body .time .views {
+    float: right;
+}
+
+.card-body .time .views i {
+    color: #999fa5;
+}
+
+.page {
+    text-align: center;
+}
+bing.ico

@@ -69,4 +69,14 @@ public class BingWallpaperInfo extends BaseEntity{
 
 
     private String quiz;
+
+    /**
+     * 浏览数量
+     */
+    private int views;
+
+    /**
+     * 收藏数量
+     */
+    private int favorites;
 }
