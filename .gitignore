@@ -34,3 +34,5 @@ build/
 
 ./.mvn
 .idea
+EasyCode/*
+
