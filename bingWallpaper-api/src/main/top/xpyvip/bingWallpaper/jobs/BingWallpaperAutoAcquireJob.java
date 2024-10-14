@@ -42,7 +42,16 @@ public class BingWallpaperAutoAcquireJob {
     private String imagePath;
 
     /**
-     * 自动获取每日壁纸信息，存入数据库中
+     * 自动获取每日壁纸信息，存入数据库中， 使用原始官方bing接口
+     */
+    @XxlJob("dayAcquireOriginBingJson")
+    public void dayAcquireOriginBingJsonJobHandler() throws Exception {
+        XxlJobHelper.log("自动获取每日壁纸JSON信息");
+        this.getTodayBingWallpaperInfo();
+    }
+
+    /**
+     * 自动获取每日壁纸信息，存入数据库中，使用全的json
      */
     @XxlJob("dayAcquireBingJson")
     public void dayAcquireBingJsonJobHandler() throws Exception {
@@ -100,5 +109,9 @@ public class BingWallpaperAutoAcquireJob {
         File jarF = h.getSource();
         System.out.println(jarF.getParentFile().toString());
         String imagePath = jarF.getParentFile().toString() + File.separator + this.imagePath;
+    }
+
+    private void getTodayBingWallpaperInfo() throws UnsupportedEncodingException {
+
     }
 }
