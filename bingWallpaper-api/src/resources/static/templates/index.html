@@ -76,7 +76,6 @@
 <script src="//cdn.staticfile.net/layui/2.9.13/layui.js"></script>
 <script type="module">
     import { init } from 'https://cdn.staticfile.net/waline/3.0.0-alpha.10/waline.js';
-    $('body').css('background', 'url([[${url}]]) center center / cover no-repeat');
     // Usage
     layui.use(function(){
         var $ = layui.$;
@@ -137,4 +136,9 @@
 
 </script>
 </body>
+<style>
+    body{
+        background: url('[[${backGroundImg}]]') center center / cover no-repeat;
+    }
+</style>
 </html>
