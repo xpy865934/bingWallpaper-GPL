@@ -52,6 +52,10 @@ public class BingWallpaperController {
         TableDataInfo<BingWallpaperInfo> tableDataInfo = iBingWallpaperInfoService.getBingWallpaperInfoPage(pageQuery);
         model.addAttribute("tableData", tableDataInfo);
 
+        BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject("lastInfo");
+        byte[] imageUrl = imageUtils.getImageUrl(bingWallpaperInfo, null);
+        String jpg = ImgUtil.toBase64(ImgUtil.toImage(imageUrl), "jpg");
+        model.addAttribute("backGroundImg", "data:image/jpg;base64," + jpg);
         this.fillCommonModel(model);
         return "index";
     }
