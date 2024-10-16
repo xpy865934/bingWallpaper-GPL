@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @author Lion Li
  */
 @Data
-@ConfigurationProperties(prefix = "bing-wallpaper.site")
+@ConfigurationProperties(prefix = "bingwallpaper.site")
 @Component
 public class SiteProperties {
 
