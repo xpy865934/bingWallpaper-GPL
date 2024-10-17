@@ -87,13 +87,13 @@ public class BingWallpaperController {
         model.addAttribute("desc", bingWallpaperInfo.getTitle() + " | " + bingWallpaperInfo.getCopyright() + " | " + DateUtil.format(bingWallpaperInfo.getStartTime(), DatePattern.PURE_DATE_PATTERN));
         model.addAttribute("story", bingWallpaperInfo.getStory());
         // 如果日期小于2010-01-01
-        if (DateUtil.parse("2010-01-01", DatePattern.NORM_DATE_FORMAT).after(bingWallpaperInfo.getStartTime())) {
+        if (DateUtil.parse("2010-01-02", DatePattern.NORM_DATE_FORMAT).after(bingWallpaperInfo.getStartTime())) {
             model.addAttribute("lastPage", null);
         } else {
             model.addAttribute("lastPage", "./" + DateUtil.format(DateUtil.offsetDay(bingWallpaperInfo.getStartTime(), -1), DatePattern.PURE_DATE_PATTERN));
         }
         // 如果日期大于当前日期
-        if (DateUtil.parse("2024-06-30", DatePattern.NORM_DATE_FORMAT).before(bingWallpaperInfo.getStartTime())) {
+        if (DateUtil.offsetDay(DateUtil.date(), -1).before(bingWallpaperInfo.getStartTime())) {
             model.addAttribute("nextPage", null);
         } else {
             model.addAttribute("nextPage", "./" + DateUtil.format(DateUtil.offsetDay(bingWallpaperInfo.getStartTime(), 1), DatePattern.PURE_DATE_PATTERN));
