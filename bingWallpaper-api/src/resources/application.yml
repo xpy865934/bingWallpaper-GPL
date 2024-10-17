@@ -12,6 +12,16 @@ bingWallpaper:
   imagePath: ./images
   # 国际化
   i18n: zh_CN
+  # 网站设置
+  site:
+    title: '一次浏览一张照片来探索世界 | “必应壁纸”'
+    name: https://bing.xpyvip.top
+    author: https://bing.xpyvip.top
+    url: https://bing.xpyvip.top
+    keywords: '一次浏览一张照片来探索世界 | “必应壁纸”'
+    description: '一次浏览一张照片来探索世界 | “必应壁纸”'
+    shortDesc: '一次浏览一张照片来探索世界 | “必应壁纸”'
+    feedBackUrl: 'https://bing.me.xpyvip.top'
 
 # 开发环境配置
 server:
@@ -74,6 +84,13 @@ spring:
     deserialization:
       # 允许对象忽略json中不存在的属性
       fail_on_unknown_properties: false
+  thymeleaf:
+    enabled: true
+    encoding: UTF-8
+    prefix: classpath:/templates/
+    cache: false
+    servlet:
+      content-type: text/html
 
 
 --- # redis 单机配置(单机与集群只能开启一个另一个需要注释掉)
