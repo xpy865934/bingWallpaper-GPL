@@ -12,6 +12,7 @@ import org.springframework.boot.system.ApplicationHome;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import top.xpyvip.bingWallpaper.domain.BingWallpaperInfo;
+import top.xpyvip.bingWallpaper.enums.ImageResolution;
 import top.xpyvip.bingWallpaper.utils.redis.RedisUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +25,6 @@ import java.util.List;
 @Component
 @Slf4j
 public class ImageUtils {
-
-    private static final List<String> IMAGE_RESOLUTION = Arrays.asList(new String[]{"UHD", "1920x1200", "1920x1080", "1366x768", "1280x768",
-            "1024x768", "800x600" , "800x480" , "768x1280", "720x1280" , "640x480" , "480x800" , "400x240" , "320x240" , "240x320"});
 
     @Value("${bingWallpaper.imagePath}")
     private String imagePath;
@@ -47,38 +45,28 @@ public class ImageUtils {
             return content;
         }
         if(StrUtil.isEmpty(w)) {
-            w = "1920x1080";
+            w = ImageResolution.I1920X1080.getResolution();
         }
-        // 不包含，判断日期是否小于2022-04-27
-        if(DateUtil.parse("2022-04-27", DatePattern.NORM_DATE_FORMAT).after(bingWallpaperInfo.getStartTime())) {
-            String resolution = "1920x1080";
-            if(IMAGE_RESOLUTION.contains(w)) {
-                resolution = w;
-            }
-            // 获取文件
-            ApplicationHome h = new ApplicationHome(getClass());
-            File jarF = h.getSource();
-            System.out.println(jarF.getParentFile().toString());
-            String imagePath = jarF.getParentFile().toString() + File.separator + this.imagePath;
-            imagePath = imagePath + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), DatePattern.NORM_YEAR_PATTERN)
-                    + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), "MM") + File.separator
-                    + DateUtil.format(bingWallpaperInfo.getStartTime(), "dd") +  "_" + resolution + ".jpg";
-
-            try {
-                content = IoUtil.readBytes(new FileInputStream(imagePath));
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
-            return content;
-        } else {
-            // 判断图像分辨率是否包含
-            if(!IMAGE_RESOLUTION.contains(w)) {
-                // 获取w字符串中最大的数值
-                w = String.valueOf(StringUtils.getMaxNum(w));
-                return HttpUtil.downloadBytes("https://cn.bing.com" + bingWallpaperInfo.getUrlbase() + "_UHD.jpg&w=" + w);
-            }
-            return HttpUtil.downloadBytes("https://cn.bing.com" + bingWallpaperInfo.getUrlbase() + "_" + w + ".jpg");
+        // 不判断日期，直接取文件夹中的文件
+        String resolution = ImageResolution.I1920X1080.getResolution();
+        ImageResolution imageResolution = ImageResolution.find(w);
+        if(ObjUtil.isNotEmpty(imageResolution)) {
+            resolution = w;
         }
+        // 获取文件
+        ApplicationHome h = new ApplicationHome(getClass());
+        File jarF = h.getSource();
+        System.out.println(jarF.getParentFile().toString());
+        String imagePath = jarF.getParentFile().toString() + File.separator + this.imagePath;
+        imagePath = imagePath + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), DatePattern.NORM_YEAR_PATTERN)
+                + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), "MM") + File.separator
+                + DateUtil.format(bingWallpaperInfo.getStartTime(), "dd") +  "_" + resolution + ".jpg";
+        try {
+            content = IoUtil.readBytes(new FileInputStream(imagePath));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return content;
     }
 
     public void backImage(byte[] image, HttpServletRequest request, HttpServletResponse response) throws Exception {
