@@ -31,6 +31,7 @@
         <alibaba-ttl.version>2.14.2</alibaba-ttl.version>
         <xxl-job.version>2.4.0</xxl-job.version>
         <redisson.version>3.20.1</redisson.version>
+        <thumbnailator.version>0.4.20</thumbnailator.version>
     </properties>
 
     <profiles>
@@ -144,6 +145,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-thymeleaf</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+            <dependency>
+                <groupId>net.coobird</groupId>
+                <artifactId>thumbnailator</artifactId>
+                <version>${thumbnailator.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
