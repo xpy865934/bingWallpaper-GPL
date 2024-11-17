@@ -19,6 +19,7 @@ import top.xpyvip.bingWallpaper.config.properties.SiteProperties;
 import top.xpyvip.bingWallpaper.domain.BingWallpaperInfo;
 import top.xpyvip.bingWallpaper.domain.PageQuery;
 import top.xpyvip.bingWallpaper.domain.TableDataInfo;
+import top.xpyvip.bingWallpaper.enums.ImageResolution;
 import top.xpyvip.bingWallpaper.services.IBingWallpaperInfoService;
 import top.xpyvip.bingWallpaper.utils.ImageUtils;
 import top.xpyvip.bingWallpaper.utils.redis.RedisUtils;
@@ -53,7 +54,7 @@ public class BingWallpaperController {
         model.addAttribute("tableData", tableDataInfo);
 
         BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject("lastInfo");
-        byte[] imageUrl = imageUtils.getImageUrl(bingWallpaperInfo, null);
+        byte[] imageUrl = imageUtils.getImageUrl(bingWallpaperInfo, ImageResolution.I400X240.getResolution());
         String jpg = ImgUtil.toBase64(ImgUtil.toImage(imageUrl), "jpg");
         model.addAttribute("backGroundImg", "data:image/jpg;base64," + jpg);
         this.fillCommonModel(model);
@@ -81,7 +82,7 @@ public class BingWallpaperController {
             day = DateUtil.format(bingWallpaperInfo.getStartTime(), DatePattern.PURE_DATE_PATTERN);
         }
         // 图片不使用api接口，直接转换成base64
-        byte[] imageUrl = imageUtils.getImageUrl(bingWallpaperInfo, null);
+        byte[] imageUrl = imageUtils.getImageUrl(bingWallpaperInfo, ImageResolution.I1920X1080.getResolution());
         String jpg = ImgUtil.toBase64(ImgUtil.toImage(imageUrl), "jpg");
         model.addAttribute("detailUrl", "data:image/jpg;base64," + jpg);
         model.addAttribute("desc", bingWallpaperInfo.getTitle() + " | " + bingWallpaperInfo.getCopyright() + " | " + DateUtil.format(bingWallpaperInfo.getStartTime(), DatePattern.PURE_DATE_PATTERN));
