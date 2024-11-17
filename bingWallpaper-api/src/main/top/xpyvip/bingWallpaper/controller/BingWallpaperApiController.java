@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import top.xpyvip.bingWallpaper.domain.BingWallpaperInfo;
+import top.xpyvip.bingWallpaper.enums.ImageResolution;
 import top.xpyvip.bingWallpaper.jobs.BingWallpaperAutoAcquireJob;
 import top.xpyvip.bingWallpaper.services.IBingWallpaperInfoService;
 import top.xpyvip.bingWallpaper.utils.ImageUtils;
@@ -44,7 +45,7 @@ public class BingWallpaperApiController {
      *
      */
     @GetMapping()
-    public void get(String day, String w, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void get(String day, String size, String w, String h, HttpServletRequest request, HttpServletResponse response) throws Exception {
         RedisUtils.incrAtomicValue("visitCount");
         DateTime now = DateUtil.date();
         try {
@@ -56,7 +57,7 @@ public class BingWallpaperApiController {
         }
         // 此处从redis查询，不直接从数据库查询
         BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject(DateUtil.format(now, DatePattern.PURE_DATE_PATTERN));
-        byte[] image = imageUtils.getImageUrl(bingWallpaperInfo, w);
+        byte[] image = imageUtils.getImageUrl(bingWallpaperInfo, size, w, h);
         imageUtils.backImage(image, request, response);
     }
 
@@ -70,7 +71,7 @@ public class BingWallpaperApiController {
         DateTime now = DateUtil.date();
         // 此处从redis查询，不直接从数据库查询
         BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject(DateUtil.format(now, DatePattern.PURE_DATE_PATTERN));
-        byte[] image = imageUtils.getImageUrl(bingWallpaperInfo, "UHD");
+        byte[] image = imageUtils.getImageUrl(bingWallpaperInfo, ImageResolution.UHD.getResolution(), null, null);
         imageUtils.backImage(image, request, response);
     }
 
@@ -79,7 +80,7 @@ public class BingWallpaperApiController {
      *
      */
     @GetMapping("/random")
-    public void random(String w, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void random(String width, String height, HttpServletRequest request, HttpServletResponse response) throws Exception {
         RedisUtils.incrAtomicValue("visitCount");
         // 计算 2022年4月27日距离当前是多少天
         long newImageDay = DateUtil.between(DateUtil.parse("2022-04-27", DatePattern.NORM_DATE_FORMAT), DateUtil.date(), DateUnit.DAY);
@@ -94,7 +95,7 @@ public class BingWallpaperApiController {
         DateTime dateTime = RandomUtil.randomDay(-next.intValue(), 0);
         // 此处从redis查询，不直接从数据库查询
         BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject(DateUtil.format(dateTime, DatePattern.PURE_DATE_PATTERN));
-        byte[] image = imageUtils.getImageUrl(bingWallpaperInfo, w);
+        byte[] image = imageUtils.getImageUrl(bingWallpaperInfo, null, width, height);
         imageUtils.backImage(image, request, response);
     }
 
@@ -117,7 +118,7 @@ public class BingWallpaperApiController {
                 bingWallpaperAutoAcquireJob.dayAcquireBingJsonJobHandler();
             }
         }
-        byte[] image = imageUtils.getImageUrl(null, null);
+        byte[] image = imageUtils.getImageUrl(null, null, null, null);
         imageUtils.backImage(image, request, response);
     }
 

@@ -31,7 +31,7 @@ public enum ImageResolution {
             return null;
         }
         for (ImageResolution resolution : values()) {
-            if (resolution.getResolution().equals(resolutionName)) {
+            if (resolution.getResolution().equals(resolutionName.toLowerCase())) {
                 return resolution;
             }
         }

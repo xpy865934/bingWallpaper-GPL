@@ -42,7 +42,7 @@
                 <div class="card-image">
                     <a href="javascript:;" th:onclick="location.href='./detail/[(${#dates.format(item.startTime, 'yyyyMMdd')})]'" th:title="${item.title} + ' ' + ${item.copyright} + ' ' + ${#dates.format(item.startTime, 'yyyyMMdd')}">
                         <div>
-                            <img th:src="@{./image/?day={day}(day=${#dates.format(item.startTime, 'yyyyMMdd')})}"
+                            <img th:src="@{./image/?day={day}(day=${#dates.format(item.startTime, 'yyyyMMdd')})} + '&size=400x240'"
                                  th:alt="${item.title} + ' ' + ${item.copyright} + ' ' + ${#dates.format(item.startTime, 'yyyyMMdd')}">
                         </div>
                     </a>
