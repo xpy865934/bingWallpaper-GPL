@@ -66,16 +66,17 @@ public class ImageUtils {
                 content = IoUtil.readBytes(new FileInputStream(imagePath));
                 return content;
             } else {
+                size = ImageResolution.I1920X1080.getResolution();
+                // 获取文件
+                ApplicationHome h = new ApplicationHome(getClass());
+                File jarF = h.getSource();
+                String imagePath = jarF.getParentFile().toString() + File.separator + this.imagePath;
+                imagePath = imagePath + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), DatePattern.NORM_YEAR_PATTERN)
+                        + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), "MM") + File.separator
+                        + DateUtil.format(bingWallpaperInfo.getStartTime(), "dd") + "_" + size + ".jpg";
                 // size为空或者不在分辨率中，此时判断高度和宽度
                 if (StrUtil.isNotEmpty(width) && NumberUtil.isInteger(width) && Integer.parseInt(width) <= 3840 && Integer.parseInt(width) > 0
                         && StrUtil.isNotEmpty(height) && NumberUtil.isInteger(height) && Integer.parseInt(height) <= 2160 && Integer.parseInt(height) > 0) {
-                    // 获取文件
-                    ApplicationHome h = new ApplicationHome(getClass());
-                    File jarF = h.getSource();
-                    String imagePath = jarF.getParentFile().toString() + File.separator + this.imagePath;
-                    imagePath = imagePath + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), DatePattern.NORM_YEAR_PATTERN)
-                            + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), "MM") + File.separator
-                            + DateUtil.format(bingWallpaperInfo.getStartTime(), "dd") + "_UHD.jpg";
                     // 直接转换高度和宽度
                     BufferedImage bufferedImage = Thumbnails.of(imagePath).size(Integer.parseInt(width), Integer.parseInt(height)).keepAspectRatio(false).asBufferedImage();
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -92,15 +93,6 @@ public class ImageUtils {
                     ImageIO.write(bufferedImage, "jpg", byteArrayOutputStream);
                     return byteArrayOutputStream.toByteArray();
                 }
-                size = ImageResolution.I1920X1080.getResolution();
-                // 获取文件
-                ApplicationHome h = new ApplicationHome(getClass());
-                File jarF = h.getSource();
-                System.out.println(jarF.getParentFile().toString());
-                String imagePath = jarF.getParentFile().toString() + File.separator + this.imagePath;
-                imagePath = imagePath + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), DatePattern.NORM_YEAR_PATTERN)
-                        + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), "MM") + File.separator
-                        + DateUtil.format(bingWallpaperInfo.getStartTime(), "dd") + "_" + size + ".jpg";
                 content = IoUtil.readBytes(new FileInputStream(imagePath));
                 return content;
             }
