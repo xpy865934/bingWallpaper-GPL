@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import top.xpyvip.bingWallpaper.domain.BingWallpaperInfo;
 import top.xpyvip.bingWallpaper.enums.ImageResolution;
+import top.xpyvip.bingWallpaper.enums.ImageType;
 import top.xpyvip.bingWallpaper.utils.redis.RedisUtils;
 
 import javax.imageio.ImageIO;
@@ -45,9 +46,16 @@ public class ImageUtils {
      * @param height
      * @return
      */
-    public byte[] getImageUrl(BingWallpaperInfo bingWallpaperInfo, String size, String width, String height)  {
+    public byte[] getImageUrl(BingWallpaperInfo bingWallpaperInfo, String size, String width, String height, String type)  {
+        // 注意，outputFormat 方法 Calling this method in conjunction with asBufferedImage() or asBufferedImages() will not result in any changes to the final result.
+        // 使用ImageIO.write进行格式转换
         byte[] content = null;
+        ImageType defaultType = ImageType.jpg;
         try {
+            ImageType imageType = ImageType.find(type);
+            if(ObjUtil.isNotEmpty(imageType)) {
+                defaultType = imageType;
+            }
             if (ObjUtil.isEmpty(bingWallpaperInfo)) {
                 // 默认是当前最新
                 // 查询redis中最新数据
@@ -63,6 +71,12 @@ public class ImageUtils {
                 imagePath = imagePath + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), DatePattern.NORM_YEAR_PATTERN)
                         + File.separator + DateUtil.format(bingWallpaperInfo.getStartTime(), "MM") + File.separator
                         + DateUtil.format(bingWallpaperInfo.getStartTime(), "dd") + "_" + size + ".jpg";
+                if(defaultType != ImageType.jpg) {
+                    BufferedImage bufferedImage = Thumbnails.of(imagePath).scale(1).outputFormat(defaultType.getType()).asBufferedImage();
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    ImageIO.write(bufferedImage, defaultType.getType(), byteArrayOutputStream);
+                    return byteArrayOutputStream.toByteArray();
+                }
                 content = IoUtil.readBytes(new FileInputStream(imagePath));
                 return content;
             } else {
@@ -78,19 +92,37 @@ public class ImageUtils {
                 if (StrUtil.isNotEmpty(width) && NumberUtil.isInteger(width) && Integer.parseInt(width) <= 3840 && Integer.parseInt(width) > 0
                         && StrUtil.isNotEmpty(height) && NumberUtil.isInteger(height) && Integer.parseInt(height) <= 2160 && Integer.parseInt(height) > 0) {
                     // 直接转换高度和宽度
-                    BufferedImage bufferedImage = Thumbnails.of(imagePath).size(Integer.parseInt(width), Integer.parseInt(height)).keepAspectRatio(false).asBufferedImage();
+                    Thumbnails.Builder<File> fileBuilder = Thumbnails.of(imagePath).size(Integer.parseInt(width), Integer.parseInt(height)).keepAspectRatio(false);
+                    if(defaultType != ImageType.jpg) {
+                        fileBuilder.outputFormat(defaultType.getType());
+                    }
+                    BufferedImage bufferedImage = fileBuilder.asBufferedImage();
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    ImageIO.write(bufferedImage, "jpg", byteArrayOutputStream);
+                    ImageIO.write(bufferedImage, defaultType != ImageType.jpg ? defaultType.getType() : ImageType.jpg.getType(), byteArrayOutputStream);
                     return byteArrayOutputStream.toByteArray();
                 } else if (StrUtil.isNotEmpty(width) && NumberUtil.isInteger(width) && Integer.parseInt(width) <= 3840 && Integer.parseInt(width) > 0) {
-                    BufferedImage bufferedImage = Thumbnails.of(imagePath).width(Integer.parseInt(width)).asBufferedImage();
+                    Thumbnails.Builder<File> fileBuilder = Thumbnails.of(imagePath).width(Integer.parseInt(width));
+                    if(defaultType != ImageType.jpg) {
+                        fileBuilder.outputFormat(defaultType.getType());
+                    }
+                    BufferedImage bufferedImage = fileBuilder.asBufferedImage();
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    ImageIO.write(bufferedImage, "jpg", byteArrayOutputStream);
+                    ImageIO.write(bufferedImage, defaultType != ImageType.jpg ? defaultType.getType() : ImageType.jpg.getType(), byteArrayOutputStream);
                     return byteArrayOutputStream.toByteArray();
                 } else if (StrUtil.isNotEmpty(height) && NumberUtil.isInteger(height) && Integer.parseInt(height) <= 2160 && Integer.parseInt(height) > 0) {
-                    BufferedImage bufferedImage = Thumbnails.of(imagePath).height(Integer.parseInt(height)).asBufferedImage();
+                    Thumbnails.Builder<File> fileBuilder = Thumbnails.of(imagePath).height(Integer.parseInt(height));
+                    if(defaultType != ImageType.jpg) {
+                        fileBuilder.outputFormat(defaultType.getType());
+                    }
+                    BufferedImage bufferedImage = fileBuilder.asBufferedImage();
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    ImageIO.write(bufferedImage, "jpg", byteArrayOutputStream);
+                    ImageIO.write(bufferedImage, defaultType != ImageType.jpg ? defaultType.getType() : ImageType.jpg.getType(), byteArrayOutputStream);
+                    return byteArrayOutputStream.toByteArray();
+                }
+                if(defaultType != ImageType.jpg) {
+                    BufferedImage bufferedImage = Thumbnails.of(imagePath).scale(1).outputFormat(defaultType.getType()).asBufferedImage();
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    ImageIO.write(bufferedImage, defaultType.getType(), byteArrayOutputStream);
                     return byteArrayOutputStream.toByteArray();
                 }
                 content = IoUtil.readBytes(new FileInputStream(imagePath));
@@ -109,9 +141,14 @@ public class ImageUtils {
         }
     }
 
-    public void backImage(byte[] image, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void backImage(byte[] image, String type, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ImageType defaultType = ImageType.jpg;
+        ImageType imageType = ImageType.find(type);
+        if(ObjUtil.isNotEmpty(imageType)) {
+            defaultType = imageType;
+        }
         // 设置 contentType
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        response.setContentType(defaultType.getMediaType());
         // 输出附件
         IoUtil.write(response.getOutputStream(), false, image);
     }
