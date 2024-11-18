@@ -32,6 +32,7 @@
         <xxl-job.version>2.4.0</xxl-job.version>
         <redisson.version>3.20.1</redisson.version>
         <thumbnailator.version>0.4.20</thumbnailator.version>
+        <webp-imageio.version>0.1.6</webp-imageio.version>
     </properties>
 
     <profiles>
@@ -152,6 +153,13 @@
                 <groupId>net.coobird</groupId>
                 <artifactId>thumbnailator</artifactId>
                 <version>${thumbnailator.version}</version>
+            </dependency>
+
+            <!-- 支持图片格式 WebP -->
+            <dependency>
+                <groupId>org.sejda.imageio</groupId>
+                <artifactId>webp-imageio</artifactId>
+                <version>${webp-imageio.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
