@@ -104,6 +104,23 @@ public class BingWallpaperAutoAcquireJob {
         }
     }
 
+    /**
+     * 随机生成访问量
+     */
+    @XxlJob("randomVisit")
+    public void randomVisit() throws Exception {
+        XxlJobHelper.log("随机生成访问量");
+        LambdaQueryWrapper<BingWallpaperInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(BingWallpaperInfo::getStartTime);
+        List<BingWallpaperInfo> list = bingWallpaperInfoService.list(queryWrapper);
+        for (BingWallpaperInfo bingWallpaperInfo : list) {
+            long between = DateUtil.between(bingWallpaperInfo.getStartTime(), new Date(), DateUnit.DAY);
+            int i = RandomUtil.randomInt(50, (int) (3000 - (between * 0.5)));
+            bingWallpaperInfo.setViews(i);
+            bingWallpaperInfoService.updateById(bingWallpaperInfo);
+        }
+    }
+
     private void getBingWallpaperInfo(List<String> dateList) {
         ApplicationHome h = new ApplicationHome(getClass());
         File jarF = h.getSource();
