@@ -123,7 +123,7 @@ a:hover {
     text-align: center;
 }
 
-#api-table td {
+.layui-table td {
     font-size: 14px;
     padding: 5px 15px;
     font-weight: bold;

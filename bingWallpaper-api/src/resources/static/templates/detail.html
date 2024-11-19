@@ -61,6 +61,78 @@
     </div>
 </div>
 
+<div id="api-body" style="display: none;">
+    <table class="layui-table">
+        <colgroup>
+            <col width="25%">
+            <col width="40%">
+            <col>
+        </colgroup>
+        <tbody>
+        <tr>
+            <td th:text="${shortDesc}" colspan="2" align="center"></td>
+            <td rowspan="3">2</td>
+        </tr>
+        <tr>
+            <td align="center">图片刷新时间：每天00:30</td>
+            <td align="center" th:text="'API调用总次数：' + ${visitCount} + '次'"></td>
+        </tr>
+        <tr>
+            <td align="center">首页</td>
+            <td><a target="_blank" th:href="${url}" th:text="${url}"></a></td>
+        </tr>
+        <tr>
+            <td align="center" rowspan="2">当天图片</td>
+            <td><a target="_blank" th:href="${url} + '/image'" th:text="${url} + '/image'"></a></td>
+            <td>1080P</td>
+        </tr>
+        <tr>
+            <td><a target="_blank" th:href="${url} + '/image/4K'" th:text="${url} + '/image/4K'"></a></td>
+            <td>4K</td>
+        </tr>
+        <tr>
+            <td align="center">随机图片</td>
+            <td colspan="2"><a target="_blank" th:href="${url} + '/image/random'" th:text="${url} + '/image/random'"></a></td>
+        </tr>
+        <tr>
+            <td align="center" rowspan="2">参数说明</td>
+            <td colspan="2">
+                <a target="_blank" th:href="${url} + @{/image?day={day}(day=${#dates.format(new java.util.Date(), 'yyyy-MM-dd')})} + '&size=1920x1080&type=jpg'" th:text="${url} + '/image?day=' + ${#dates.format(new java.util.Date(), 'yyyy-MM-dd')} + '&size=1920x1080&type=jpg'"></a>
+                <a target="_blank" th:href="${url} + @{/image?day={day}(day=${#dates.format(new java.util.Date(), 'yyyy-MM-dd')})} + '&width=1920&height=1080&type=jpg'" th:text="${url} + '/image?day=' + ${#dates.format(new java.util.Date(), 'yyyy-MM-dd')} + '&width=1920&height=1080&type=jpg'"></a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <span th:text="'day=' + ${#dates.format(new java.util.Date(), 'yyyy-MM-dd')}"></span> &nbsp;指定日期（2010-01-01到现在），随机图像接口无效，可以省略<br>
+                size=1920x1080&nbsp;指定分辨率大小<br>
+                width=1920&nbsp;指定指定宽度<br>
+                height=1080&nbsp;指定指定高度<br>
+                type=jpg&nbsp;指定图片格式<br>
+                <span style="color: #f00">size\width\height设置一项即可，同时设置，优先使用size的值</span>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">分辨率</td>
+            <td colspan="2">
+                UHD , 1920x1200 , 1920x1080 , 1366x768 , 1280x768 ,1024x768 , 800x600 , 800x480 , 768x1280 ,720x1280 , 640x480 , 480x800 , 400x240 , 320x240 , 240x320
+            </td>
+        </tr>
+        <tr>
+            <td align="center">图片格式</td>
+            <td colspan="2">
+                JPG, jpg, JPEG, jpeg, PNG, png, webp
+            </td>
+        </tr>
+        <tr>
+            <td align="center">调用方式</td>
+            <td colspan="2">
+                <xmp style="display: contents"><img th:src="@{${url} + '/image/'}"/></xmp>放在指定位置即可
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
 <!-- HTML Content -->
 <script src="//cdn.staticfile.net/layui/2.9.13/layui.js"></script>
 <script type="module">
@@ -75,7 +147,7 @@
             layer.open({
                 type: 1, // page 层类型
                 area: ['800px', '600px'],
-                title: '系统反馈',
+                title: '系统反馈（请文明发言，留言审核后才会展示！）',
                 shade: 0.6, // 遮罩透明度
                 shadeClose: true, // 点击遮罩区域，关闭弹层
                 maxmin: true, // 允许全屏最小化
@@ -97,12 +169,12 @@
             layer.open({
                 type: 1, // page 层类型
                 area: ['800px', '600px'],
-                title: '系统反馈',
+                title: 'bing图片API接口',
                 shade: 0.6, // 遮罩透明度
                 shadeClose: true, // 点击遮罩区域，关闭弹层
                 maxmin: true, // 允许全屏最小化
                 anim: 0, // 0-6 的动画形式，-1 不开启
-                content: '<div id="feed-back-body">12</div>'
+                content: $('#api-body')
             });
         });
     });

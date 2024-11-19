@@ -103,3 +103,9 @@ body {
 .preview-pagination .right-preview-btn button:hover {
     background-color: rgba(0,0,0,0.5);
 }
+
+.layui-table td {
+    font-size: 14px;
+    padding: 5px 15px;
+    font-weight: bold;
+}
