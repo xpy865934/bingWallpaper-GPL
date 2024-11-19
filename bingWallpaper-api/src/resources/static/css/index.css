@@ -128,3 +128,10 @@ a:hover {
     padding: 5px 15px;
     font-weight: bold;
 }
+
+.footer {
+    background-color: #cccccc;
+    opacity: 0.8;
+    line-height: 36px;
+    text-align: center;
+}

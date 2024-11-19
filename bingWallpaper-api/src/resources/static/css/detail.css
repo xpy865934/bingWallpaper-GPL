@@ -55,7 +55,7 @@ body {
 .desc {
     position: absolute;
     left: 0;
-    bottom: 0;
+    bottom: 36px;
     display: block;
     width: 100%;
     color: #fff;
@@ -108,4 +108,14 @@ body {
     font-size: 14px;
     padding: 5px 15px;
     font-weight: bold;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    background-color: #cccccc;
+    opacity: 0.5;
+    width: 100%;
+    line-height: 36px;
+    text-align: center;
 }
