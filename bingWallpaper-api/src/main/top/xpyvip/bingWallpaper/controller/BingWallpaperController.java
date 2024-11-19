@@ -77,10 +77,21 @@ public class BingWallpaperController {
         }
         // 此处从redis查询，不直接从数据库查询
         BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject(DateUtil.format(now, DatePattern.PURE_DATE_PATTERN));
+        if(ObjUtil.isNotEmpty(bingWallpaperInfo)) {
+            // 设置当前的访问量
+            BingWallpaperInfo updateData = new BingWallpaperInfo();
+            updateData.setId(bingWallpaperInfo.getId());
+            updateData.setViews(bingWallpaperInfo.getViews() + 1);
+            iBingWallpaperInfoService.updateById(updateData);
+
+            // 更新回redis
+            bingWallpaperInfo.setViews(bingWallpaperInfo.getViews() + 1);
+            RedisUtils.setCacheObject(DateUtil.format(bingWallpaperInfo.getStartTime(), DatePattern.PURE_DATE_PATTERN), bingWallpaperInfo);
+        }
+
         if(ObjUtil.isEmpty(bingWallpaperInfo)) {
             // 查询redis中最新数据
             bingWallpaperInfo = RedisUtils.getCacheObject("lastInfo");
-            day = DateUtil.format(bingWallpaperInfo.getStartTime(), DatePattern.PURE_DATE_PATTERN);
         }
         // 图片不使用api接口，直接转换成base64
         byte[] imageUrl = imageUtils.getImageUrl(bingWallpaperInfo, ImageResolution.I1920X1080.getResolution(), null, null, ImageType.jpg.getType());
