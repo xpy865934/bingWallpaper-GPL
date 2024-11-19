@@ -106,6 +106,7 @@ public class BingWallpaperController {
 
     private void fillCommonModel(Model model) {
         // 通用设置
+        Integer visitCount = RedisUtils.getCacheObject("visitCount");
         model.addAttribute("title", siteProperties.getTitle());
         model.addAttribute("name", siteProperties.getName());
         model.addAttribute("url", siteProperties.getUrl());
@@ -114,5 +115,6 @@ public class BingWallpaperController {
         model.addAttribute("description", siteProperties.getDescription());
         model.addAttribute("shortDesc", siteProperties.getShortDesc());
         model.addAttribute("feedBackUrl", siteProperties.getFeedBackUrl());
+        model.addAttribute("visitCount", visitCount);
     }
 }
