@@ -62,13 +62,20 @@ public class BingWallpaperApiController {
     }
 
     /**
-     * 返回当天4K图像
+     * 返回指定日期的4K图像
      *
      */
     @GetMapping("/4K")
-    public void get4K(String type, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void get4K(String day, String type, HttpServletRequest request, HttpServletResponse response) throws Exception {
         RedisUtils.incrAtomicValue("visitCount");
         DateTime now = DateUtil.date();
+        try {
+            if(StrUtil.isNotEmpty(day)) {
+                now = DateUtil.parse(day, DatePattern.PURE_DATE_PATTERN);
+            }
+        } catch (Exception e) {
+            log.info("格式化日期错误");
+        }
         // 此处从redis查询，不直接从数据库查询
         BingWallpaperInfo bingWallpaperInfo = RedisUtils.getCacheObject(DateUtil.format(now, DatePattern.PURE_DATE_PATTERN));
         byte[] image = imageUtils.getImageUrl(bingWallpaperInfo, ImageResolution.UHD.getResolution(), null, null, type);
