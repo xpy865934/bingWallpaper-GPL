@@ -1,4 +1,4 @@
-bing Wallpaper get and display items for free, provide image API interface. [Have a look !](https://bing.xpyvip.top).
+Bing Wallpaper get and display items for free, provide image API interface. [Have a look !](https://bing.xpyvip.top).
 
 ## Functionalities and roadmap
 
@@ -11,6 +11,12 @@ You have an idea of a tool? Submit a [feature request](https://github.com/xpy865
 - jdk17
 - Spring Boot 2.7
 - idea2024
+
+## Demo legend
+|                                                                                            |                                                                                            |
+|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+| ![输入图片说明](.github/demo1.png "屏幕截图")                                                        | ![输入图片说明](.github/demo2.png "屏幕截图")                                                        |
+| ![输入图片说明](.github/demo3.png "屏幕截图")                                                        | ![输入图片说明](.github/demo4.png "屏幕截图")                                                        |
 
 ## License
 
