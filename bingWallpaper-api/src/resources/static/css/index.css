@@ -105,6 +105,10 @@ a:hover {
     background-color: #fff;
 }
 
+.card-body .title {
+    height: 36px;
+}
+
 .card-body .title h2 {
     font-weight: 400;
     text-overflow: ellipsis;
