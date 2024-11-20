@@ -17,6 +17,10 @@ a:hover {
     background: linear-gradient(to right, #ffecea, #c4e7f7, #ffecea, #c4e7f7, #ffecea);
     min-height: 50px;
     margin-bottom: 1.6rem;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 1;
 }
 
 .container {
