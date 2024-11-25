@@ -47,7 +47,25 @@ public class BingWallpaperAutoAcquireJob {
     @XxlJob("dayAcquireOriginBingJson")
     public void dayAcquireOriginBingJsonJobHandler() throws Exception {
         XxlJobHelper.log("自动获取每日壁纸JSON信息");
-        this.getTodayBingWallpaperInfo();
+        Date oldDate = DateUtil.date();
+        // 获取数据库中当前最大的日期
+        LambdaQueryWrapper<BingWallpaperInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(BingWallpaperInfo::getStartTime).orderByDesc(BingWallpaperInfo::getStartTime).last("limit 1");
+        BingWallpaperInfo bingWallpaperInfo = bingWallpaperInfoService.getOne(queryWrapper);
+        if (ObjUtil.isNotEmpty(bingWallpaperInfo)) {
+            oldDate = bingWallpaperInfo.getStartTime();
+        }
+        //判断当前时间和旧日期之间的时间差
+        List<String> dateList = CollUtil.newArrayList();
+        long between = DateUtil.between(oldDate, DateUtil.date(), DateUnit.DAY);
+        for (int i = 0; i < between; i++) {
+            DateTime dateTime = DateUtil.offsetDay(oldDate, i+1);
+            dateList.add(DateUtil.format(dateTime, DatePattern.PURE_DATE_PATTERN));
+        }
+        if(CollUtil.isEmpty(dateList)){
+            return;
+        }
+        this.getTodayBingWallpaperInfo(dateList);
     }
 
     /**
@@ -128,7 +146,7 @@ public class BingWallpaperAutoAcquireJob {
         String imagePath = jarF.getParentFile().toString() + File.separator + this.imagePath;
     }
 
-    private void getTodayBingWallpaperInfo() throws UnsupportedEncodingException {
+    private void getTodayBingWallpaperInfo(List<String> dateList) throws UnsupportedEncodingException {
 
     }
 }
