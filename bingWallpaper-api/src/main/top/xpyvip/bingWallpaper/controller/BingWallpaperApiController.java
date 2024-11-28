@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import top.xpyvip.bingWallpaper.domain.BingWallpaperInfo;
 import top.xpyvip.bingWallpaper.enums.ImageResolution;
@@ -123,6 +124,30 @@ public class BingWallpaperApiController {
             if (hours > 0) {
                 RedisUtils.setCacheObject("lastRefreshTime", DateUtil.now());
                 bingWallpaperAutoAcquireJob.dayAcquireBingJsonJobHandler();
+            }
+        }
+        byte[] image = imageUtils.getImageUrl(null, null, null, null, null);
+        imageUtils.backImage(image, null, request, response);
+    }
+
+    /**
+     * 更新指定日期缓存
+     *
+     */
+    @GetMapping("/refreshDay/{day}")
+    public void refreshDayCache(@PathVariable String day, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 刷新指定日期数据
+        RedisUtils.incrAtomicValue("visitCount");
+        // 限制一个小时之内只能调用一次
+        String lastRefreshTime = RedisUtils.getCacheObject("lastRefreshTime");
+        if(StrUtil.isEmpty(lastRefreshTime)) {
+            RedisUtils.setCacheObject("lastRefreshTime", DateUtil.now());
+            bingWallpaperAutoAcquireJob.assignDayAcquireOriginBingJsonJobHandler(day);
+        } else {
+            long hours = DateUtil.between(DateUtil.parse(lastRefreshTime, DatePattern.NORM_DATETIME_FORMAT), DateUtil.date(), DateUnit.HOUR);
+            if (hours > 0) {
+                RedisUtils.setCacheObject("lastRefreshTime", DateUtil.now());
+                bingWallpaperAutoAcquireJob.assignDayAcquireOriginBingJsonJobHandler(day);
             }
         }
         byte[] image = imageUtils.getImageUrl(null, null, null, null, null);

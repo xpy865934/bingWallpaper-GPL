@@ -65,7 +65,7 @@ public class BingWallpaperAutoAcquireJob {
         if(CollUtil.isEmpty(dateList)){
             return;
         }
-        this.getTodayBingWallpaperInfo(dateList);
+        this.getTodayBingWallpaperInfo(dateList, true);
     }
 
     /**
@@ -92,7 +92,33 @@ public class BingWallpaperAutoAcquireJob {
         if(CollUtil.isEmpty(dateList)){
             return;
         }
-        this.getBingWallpaperInfo(dateList);
+        this.getBingWallpaperInfo(dateList, true);
+    }
+
+    /**
+     * 获取指定日期壁纸信息，使用原始官方bing接口
+     */
+    @XxlJob("assignDayAcquireOriginBingJson")
+    public void assignDayAcquireOriginBingJsonJobHandler(String day) throws Exception {
+        XxlJobHelper.log("获取指定日期壁纸信息");
+        DateTime now = null;
+        try {
+            if(StrUtil.isNotEmpty(day)) {
+                now = DateUtil.parse(day, DatePattern.PURE_DATE_PATTERN);
+            } else {
+                XxlJobHelper.log("日期不能为空");
+                return;
+            }
+        } catch (Exception e) {
+            XxlJobHelper.log("格式化日期错误");
+            return;
+        }
+        List<String> dateList = CollUtil.newArrayList();
+        dateList.add(day);
+        if(CollUtil.isEmpty(dateList)){
+            return;
+        }
+        this.getTodayBingWallpaperInfo(dateList, false);
     }
 
     /**
@@ -139,14 +165,14 @@ public class BingWallpaperAutoAcquireJob {
         }
     }
 
-    private void getBingWallpaperInfo(List<String> dateList) {
+    private void getBingWallpaperInfo(List<String> dateList, Boolean skip) {
         ApplicationHome h = new ApplicationHome(getClass());
         File jarF = h.getSource();
         System.out.println(jarF.getParentFile().toString());
         String imagePath = jarF.getParentFile().toString() + File.separator + this.imagePath;
     }
 
-    private void getTodayBingWallpaperInfo(List<String> dateList) throws UnsupportedEncodingException {
+    private void getTodayBingWallpaperInfo(List<String> dateList, Boolean skip) throws UnsupportedEncodingException {
 
     }
 }
